@@ -57,7 +57,7 @@ async function callInspect(a, n) {
                 o.push(data);
             }
         }
-        //bar.increment();
+        bar.increment();
     }
 }
 
@@ -70,7 +70,7 @@ async function inspectAccountTransaction(a) {
             })
             .catch(error => {
                 //fs.appendFileSync(outputFilePath, "-- [Warning] -- [" + a + "] check\r\n");
-                //bar.increment();
+                bar.increment();
             });
     })
 }
@@ -84,7 +84,7 @@ async function inspectTransaction(a) {
             })
             .catch(error => {
                 //fs.appendFileSync(outputFilePath, "-- [Warning] -- [" + a + "] check\r\n");
-                //bar.increment();
+                bar.increment();
             });
     })
 }
@@ -98,7 +98,7 @@ async function inspectToken(a) {
             })
             .catch(error => {
                 //fs.appendFileSync(outputFilePath, "-- [Warning] -- [" + a + "] check\r\n");
-                //bar.increment();
+                bar.increment();
             });
     })
 }
@@ -134,20 +134,20 @@ function sleep(ms) {
 async function run() {
     console.log(configDirectory);
     //fs.truncate(outputFilePath, 0, function () { });
-    //bar.start(accountList.length * txLimit);
-    //console.log("Inizio eh [" + formatDate(new Date()) + "]");
+    bar.start(accountList.length * txLimit);
+    console.log("Inizio [" + formatDate(new Date()) + "]");
     var counter = 0;
     for (const item of accountList) {
         await callInspect(item, counter);
         counter++;
     };
-    //console.log("Done [" + formatDate(new Date()) + "]");
+    console.log("Done [" + formatDate(new Date()) + "]");
     fs.writeFileSync(outputFilePathJson, JSON.stringify(o), {
         encoding: 'utf8',
         flag: 'w'
     })
-    //bar.update(accountList.length * txLimit);
-    //bar.stop();
+    bar.update(accountList.length * txLimit);
+    bar.stop();
     //console.log("Account analyzed: " + accountList.length);
     //console.log("Account failed: " + inspectedFailed);
 }
