@@ -8,14 +8,11 @@ const cors = require('cors');
 const cron = require('node-cron');
 
 const accountList = fs.readFileSync('./account.txt', 'utf8').split('\n');
-const outputFilePath = './accountData/data.txt';
 const outputFilePathJson = './accountData/data.json';
-var inspectedFailed = 0;
 var txLimit = 40;
 var hoursLimit = 1;
 var tempRes;
 const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
-var outputText = '';
 var o = [];
 
 async function callInspect(a, n) {
@@ -56,7 +53,6 @@ async function callInspect(a, n) {
                     txHash: txs[i].txHash
                 };
                 o.push(data);
-                //outputText += dataToAppend;
             }
         }
         //bar.increment();
