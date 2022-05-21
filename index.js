@@ -164,6 +164,7 @@ app.get('/scan', (req, res) => {
 
 app.get('/run', (req, res) => {
     run();
+    res.send("Run done");
 });
 
 
