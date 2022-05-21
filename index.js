@@ -156,6 +156,7 @@ run();
 const job = new cron.CronJob('0 0 1 * * *', () => {
     run();
 });
+job.start();
 
 app.get('/scan', (req, res) => {
     fs.readFile(path.join(configDirectory, 'accountData/data.json'), (err, json) => {
