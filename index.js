@@ -5,7 +5,6 @@ const cliProgress = require('cli-progress');
 const fs = require('fs');
 const axios = require('axios');
 const cors = require('cors');
-const cron = require("cron");
 var path = require("path");
 const configDirectory = path.resolve(process.cwd());
 
@@ -163,14 +162,13 @@ app.get('/scan', (req, res) => {
     });
 });
 
-app.listen(port, () => {
-    console.log("App ready on port: " + port)
+app.get('/run', (req, res) => {
     run();
 });
 
-const job = new cron.CronJob('0 50 * * * *', () => {
+
+app.listen(port, () => {
     run();
 });
-job.start();
 
 app.use(cors());
