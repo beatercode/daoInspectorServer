@@ -13,8 +13,8 @@
         }
     ],
     "functions": {
-        "index.js": {
-            "includeFiles": "./**"
+        "*.js": {
+            "includeFiles": "./account.txt"
         }
     }
 }
