@@ -6,9 +6,11 @@ const fs = require('fs');
 const axios = require('axios');
 const cors = require('cors');
 const cron = require('node-cron');
+var path = require("path");
+const configDirectory = path.resolve(process.cwd());
 
-const accountList = fs.readFileSync(process.cwd() + 'account.txt', 'utf8').split('\n');
-const outputFilePathJson = process.cwd() + 'accountData/data.json';
+const accountList = fs.readFileSync(path.join(configDirectory, 'account.txt'), 'utf8').split('\n');
+const outputFilePathJson = path.join(configDirectory, 'accountData/data.json');
 var txLimit = 40;
 var hoursLimit = 1;
 var tempRes;
@@ -130,6 +132,7 @@ function sleep(ms) {
 /* ---------------- RUN SOFTWARE ----------------- */
 
 async function run() {
+    console.log(configDirectory);
     //fs.truncate(outputFilePath, 0, function () { });
     //bar.start(accountList.length * txLimit);
     //console.log("Inizio eh [" + formatDate(new Date()) + "]");
@@ -156,7 +159,7 @@ cron.schedule('* * 1 * *', () => {
 setInterval(run, 60 * 60 * 1000);
 
 app.get('/scan', (req, res) => {
-    fs.readFile(process.cwd() + 'accountData/data.json', (err, json) => {
+    fs.readFile(path.join(configDirectory, 'accountData/data.json'), (err, json) => {
         if (json == '') {
             res.send("Ciao")
         } else {
