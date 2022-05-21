@@ -152,12 +152,6 @@ async function run() {
     //console.log("Account failed: " + inspectedFailed);
 }
 
-run();
-const job = new cron.CronJob('0 50 * * * *', () => {
-    run();
-});
-job.start();
-
 app.get('/scan', (req, res) => {
     fs.readFile(path.join(configDirectory, 'accountData/data.json'), (err, json) => {
         if (json == '') {
@@ -170,6 +164,11 @@ app.get('/scan', (req, res) => {
 });
 
 app.listen(port, () => {
+    run();
+    const job = new cron.CronJob('0 50 * * * *', () => {
+        run();
+    });
+    job.start();
 })
 
 app.use(cors());
