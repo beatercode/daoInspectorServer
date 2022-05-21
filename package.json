@@ -1,0 +1,29 @@
+{
+  "name": "daoinspector",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "r": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@solana/web3.js": "^1.42.0",
+    "axios": "^0.27.2",
+    "child-process-async": "^1.0.1",
+    "cli-progress": "^3.11.1",
+    "cors": "^2.8.5",
+    "create-react-app": "^5.0.1",
+    "express": "^4.18.1",
+    "moment": "^2.29.3",
+    "node-cron": "^3.0.0",
+    "node-libcurl": "^2.3.4",
+    "request": "^2.88.2",
+    "requestretry": "^7.1.0"
+  },
+  "engines": {
+    "node": "17.x"
+  }
+}
