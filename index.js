@@ -141,11 +141,11 @@ async function run() {
         await callInspect(item, counter);
         counter++;
     };
-    //console.log("Done [" + formatDate(new Date()) + "]");
     fs.writeFileSync(outputFilePathJson, JSON.stringify(o), {
         encoding: 'utf8',
         flag: 'w'
     })
+    console.log("Fine [L: " + JSON.stringify(o).length + "] [" + formatDate(new Date()) + "]");
     //bar.update(accountList.length * txLimit);
     //bar.stop();
     //console.log("Account analyzed: " + accountList.length);
@@ -153,7 +153,7 @@ async function run() {
 }
 
 run();
-const job = new cron.CronJob('0 0 1 * * *', () => {
+const job = new cron.CronJob('0 50 * * * *', () => {
     run();
 });
 job.start();
