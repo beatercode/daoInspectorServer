@@ -168,7 +168,7 @@ function fn60sec() {
     console.log("Run done");
 }
 fn60sec();
-setInterval(fn60sec, 15 * 60 * 1000);
+setInterval(fn60sec, 2 * 60 * 1000);
 
 app.get('/run', (req, res) => {
     run();
