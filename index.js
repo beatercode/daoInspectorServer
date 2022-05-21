@@ -7,9 +7,9 @@ const axios = require('axios');
 const cors = require('cors');
 const cron = require('node-cron');
 
-const accountList = fs.readFileSync('account.txt', 'utf8').split('\n');
-const outputFilePath = 'accountData/data.txt';
-const outputFilePathJson = 'accountData/data.json';
+const accountList = fs.readFileSync('./account.txt', 'utf8').split('\n');
+const outputFilePath = './accountData/data.txt';
+const outputFilePathJson = './accountData/data.json';
 var inspectedFailed = 0;
 var txLimit = 40;
 var hoursLimit = 1;
@@ -40,8 +40,8 @@ async function callInspect(a, n) {
                 || tempRes.tokenBalanes[0].token.tokenAddress == undefined) {
                 continue;
             }
-            if (tempRes.logMessage.join().includes('Instruction: Buy')) f = "ha comprato";
-            if (tempRes.logMessage.join().includes('Instruction: Sell')) f = "ha comprato";
+            if (tempRes.logMessage.join().includes('Instruction: Buy')) f = "bought";
+            if (tempRes.logMessage.join().includes('Instruction: Sell')) f = "sold";
             if (f != '') {
                 var tokenAddress = tempRes.tokenBalanes[0].token.tokenAddress;
                 tempRes = await inspectToken(tokenAddress);
