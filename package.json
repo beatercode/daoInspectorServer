@@ -16,6 +16,7 @@
     "cli-progress": "^3.11.1",
     "cors": "^2.8.5",
     "create-react-app": "^5.0.1",
+    "cron": "^2.0.0",
     "express": "^4.18.1",
     "moment": "^2.29.3",
     "node-cron": "^3.0.0",

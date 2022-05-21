@@ -5,7 +5,7 @@ const cliProgress = require('cli-progress');
 const fs = require('fs');
 const axios = require('axios');
 const cors = require('cors');
-const cron = require('node-cron');
+const cron = require("cron");
 var path = require("path");
 const configDirectory = path.resolve(process.cwd());
 
@@ -153,10 +153,9 @@ async function run() {
 }
 
 run();
-cron.schedule('* * 1 * *', () => {
+const job = new cron.CronJob('0 0 1 * * *', () => {
     run();
 });
-setInterval(run, 60 * 60 * 1000);
 
 app.get('/scan', (req, res) => {
     fs.readFile(path.join(configDirectory, 'accountData/data.json'), (err, json) => {
