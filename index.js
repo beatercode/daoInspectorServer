@@ -164,11 +164,13 @@ app.get('/scan', (req, res) => {
 });
 
 app.listen(port, () => {
+    console.log("App ready on port: " + port)
     run();
-    const job = new cron.CronJob('0 50 * * * *', () => {
-        run();
-    });
-    job.start();
-})
+});
+
+const job = new cron.CronJob('0 50 * * * *', () => {
+    run();
+});
+job.start();
 
 app.use(cors());
