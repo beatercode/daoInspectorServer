@@ -7,8 +7,8 @@ const axios = require('axios');
 const cors = require('cors');
 const cron = require('node-cron');
 
-const accountList = fs.readFileSync('./account.txt', 'utf8').split('\n');
-const outputFilePathJson = './accountData/data.json';
+const accountList = fs.readFileSync(process.cwd() + 'account.txt', 'utf8').split('\n');
+const outputFilePathJson = process.cwd() + 'accountData/data.json';
 var txLimit = 40;
 var hoursLimit = 1;
 var tempRes;
@@ -156,7 +156,7 @@ cron.schedule('* * 1 * *', () => {
 setInterval(run, 60 * 60 * 1000);
 
 app.get('/scan', (req, res) => {
-    fs.readFile('./accountData/data.json', (err, json) => {
+    fs.readFile(process.cwd() + 'accountData/data.json', (err, json) => {
         if (json == '') {
             res.send("Ciao")
         } else {
