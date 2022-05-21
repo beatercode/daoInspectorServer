@@ -177,7 +177,6 @@ app.get('/run', (req, res) => {
 
 
 app.listen(port, () => {
-    run();
 });
 
 app.use(cors());
