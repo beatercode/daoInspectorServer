@@ -162,6 +162,14 @@ app.get('/scan', (req, res) => {
     });
 });
 
+function fn60sec() {
+    // runs every 60 sec and runs on init.
+    run();
+    res.send("Run done");
+}
+fn60sec();
+setInterval(fn60sec, 15 * 60 * 1000);
+
 app.get('/run', (req, res) => {
     run();
     res.send("Run done");
