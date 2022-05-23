@@ -64,6 +64,7 @@ async function callInspect(a, n) {
 async function inspectAccountTransaction(a) {
   await sleep(300);
   return new Promise(function(resolve, reject) {
+
     axios.get('https://public-api.solscan.io/account/transactions?account=' + a + '&limit=' + txLimit + '')
       .then(response => {
         resolve(JSON.parse(JSON.stringify(response.data)));
@@ -161,7 +162,7 @@ async function run() {
     fs.writeFileSync(outputFilePathJson, JSON.stringify(newJson),
       { encoding: 'utf8', flag: 'w' }
     );
-    console.log("Fine [L: " + o.length + "] [" + formatDate(new Date().addHours(2)) + "]");
+    console.log("Fine [TOTAL TX: " + newJson.length + "] [NEW: " + o.length + "] [" + formatDate(new Date().addHours(2)) + "]");
     monitor.ping({ state: 'complete' });
   } catch (e) {
     monitor.ping({ state: 'fail' });
