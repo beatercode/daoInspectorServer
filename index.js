@@ -2,13 +2,14 @@ const express = require('express');
 const app = express();
 const port = 8008;
 const cliProgress = require('cli-progress');
+const cronitor = require('cronitor')('cbaee3d8d9bb4bd090e5e26015a2813f');
 const fs = require('fs');
 const axios = require('axios');
 const cors = require('cors');
-const cron = require("cron");
-var path = require("path");
-const configDirectory = path.resolve(process.cwd());
+const cron = require("node-cron");
+const path = require("path");
 
+const configDirectory = path.resolve(process.cwd());
 const accountList = fs.readFileSync(path.join(configDirectory, 'account.txt'), 'utf8').split('\n');
 const outputFilePathJson = path.join(configDirectory, 'accountData/data.json');
 var txLimit = 50;
@@ -17,6 +18,7 @@ var tempRes;
 const bar = new cliProgress.SingleBar({}, cliProgress.Presets.shades_classic);
 var o = [];
 var fullData = [];
+const monitor = new cronitor.Monitor('ODA Wallet Inspect - Server');
 
 async function callInspect(a, n) {
   tempRes = await inspectAccountTransaction(a);
@@ -28,7 +30,7 @@ async function callInspect(a, n) {
   for (let i = 0; i < txs.length; i++) {
     let d = new Date(0);
     d.setUTCSeconds(+txs[i].blockTime);
-    var hours = Math.abs(d - new Date()) / 36e5;
+    var hours = Math.abs(new Date() - d) / 36e5;
     if (hours < hoursLimit) {
       tempRes = await inspectTransaction(txs[i].txHash);
       var f = '';
@@ -67,8 +69,7 @@ async function inspectAccountTransaction(a) {
         resolve(JSON.parse(JSON.stringify(response.data)));
       })
       .catch(error => {
-        //fs.appendFileSync(outputFilePath, "-- [Warning] -- [" + a + "] check\r\n");
-        //bar.increment();
+        console.log("[ERROR] [inspectAccountTransaction] [" + a + "] " + error);
       });
   })
 }
@@ -81,8 +82,7 @@ async function inspectTransaction(a) {
         resolve(JSON.parse(JSON.stringify(response.data)));
       })
       .catch(error => {
-        //fs.appendFileSync(outputFilePath, "-- [Warning] -- [" + a + "] check\r\n");
-        //bar.increment();
+        console.log("[ERROR] [inspectTransaction] [" + a + "] " + error);
       });
   })
 }
@@ -95,8 +95,7 @@ async function inspectToken(a) {
         resolve(JSON.parse(JSON.stringify(response.data)));
       })
       .catch(error => {
-        //fs.appendFileSync(outputFilePath, "-- [Warning] -- [" + a + "] check\r\n");
-        //bar.increment();
+        console.log("[ERROR] [inspectToken] [" + a + "] " + error);
       });
   })
 }
@@ -127,27 +126,46 @@ function sleep(ms) {
   });
 }
 
+Date.prototype.addHours = function(h) {
+  this.setTime(this.getTime() + (h * 60 * 60 * 1000));
+  return this;
+}
+
+function createNewJson(data) {
+  //read old json
+  var oldJson = JSON.parse(fs.readFileSync(path.join(configDirectory, 'accountData/data.json')));
+  oldJson = oldJson == '' ? [] : oldJson;
+  //create new json 
+  var newJson = oldJson.concat(data);
+  //remove older than 24h
+  newJson = newJson.filter(a => (Math.abs(new Date() - new Date(a.date)) / 36e5) < 24);
+  //removing duplicate
+  const set = new Set(newJson.map(item => JSON.stringify(item)));
+  newJson = [...set].map(item => JSON.parse(item));
+  return newJson;
+}
+
 /* ---------------- RUN SOFTWARE ----------------- */
 
 async function run() {
-  console.log(configDirectory);
-  //fs.truncate(outputFilePath, 0, function () { });
-  //bar.start(accountList.length * txLimit);
-  console.log("Inizio [" + formatDate(new Date()) + "]");
-  var counter = 0;
-  for (const item of accountList) {
-    await callInspect(item, counter);
-    counter++;
-  };
-  fs.writeFileSync(outputFilePathJson, JSON.stringify(o), {
-    encoding: 'utf8',
-    flag: 'w'
-  })
-  console.log("Fine [L: " + JSON.stringify(o).length + "] [" + formatDate(new Date()) + "]");
-  //bar.update(accountList.length * txLimit);
-  //bar.stop();
-  //console.log("Account analyzed: " + accountList.length);
-  //console.log("Account failed: " + inspectedFailed);
+  o = [];
+  monitor.ping({ state: 'run' });
+  try {
+    console.log("Inizio [" + formatDate(new Date().addHours(2)) + "]");
+    var counter = 0;
+    for (const item of accountList) {
+      await callInspect(item, counter);
+      counter++;
+    };
+    var newJson = createNewJson(o);
+    fs.writeFileSync(outputFilePathJson, JSON.stringify(newJson),
+      { encoding: 'utf8', flag: 'w' }
+    );
+    console.log("Fine [L: " + o.length + "] [" + formatDate(new Date().addHours(2)) + "]");
+    monitor.ping({ state: 'complete' });
+  } catch (e) {
+    monitor.ping({ state: 'fail' });
+  }
 }
 
 app.get('/scan', (req, res) => {
@@ -161,16 +179,15 @@ app.get('/scan', (req, res) => {
   });
 });
 
-const job = new cron.CronJob('45 * * * *', () => {
+cron.schedule('45 * * * *', () => {
+  console.log('Updating json [' + new Date().addHours(2) + ']');
   run();
-  console.log("Run done");
 });
 
 app.get('/', (req, res) => res.send(`I'm alive!`));
 
 app.listen(port, () => {
   run();
-  console.log("Run done");
 });
 
 app.use(cors());
