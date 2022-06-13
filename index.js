@@ -6,8 +6,8 @@ const axios = require('axios');
 const cron = require("node-cron");
 const path = require("path");
 
-let txLimit = 50;
-let hoursLimit = 12;
+let txLimit = 30;
+let hoursLimit = 6;
 let maxHstored = 120;
 let cronSchedule = '55 * * * *';
 

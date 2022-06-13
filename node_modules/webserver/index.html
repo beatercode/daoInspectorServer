@@ -1,0 +1,23 @@
+Web Server Test
+<script>
+
+	var loc = document.location
+	var D = function(s) { console.log(s); };
+
+	let url = "wss://"+loc.host+"/";
+	D( url );
+	var socket = new WebSocket( url );
+
+	socket.addEventListener('open', function (event) {
+		socket.send('hi server, i am client');
+	});
+
+	socket.addEventListener('message', function (event) {
+		D('server says to me: ' + event.data);
+	});
+
+	socket.addEventListener('error', function (event) {
+		D( "ws error" );
+	});
+
+</script>
